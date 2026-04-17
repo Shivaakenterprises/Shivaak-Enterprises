@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Shivaak Enterprises - Scrap Collector from Doorstep</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --green: #1a7a3c; --green-mid: #218a47; --green-light: #27a355;
+            --orange: #e8720c; --orange-deep: #c45e00;
+            --black: #1a1a1a; --dark: #f0f4f1; --card-bg: #ffffff;
+            --border: rgba(0,0,0,0.1); --text: #2a2a2a; --muted: #5a6b5e; --white: #ffffff;
+            --page-bg: #f7faf8; --section-alt: #eef4f0;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Outfit', sans-serif; background: var(--page-bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+ 
+        /* ANNOUNCEMENT BAR */
+        .ann-bar {
+            background: var(--green); color: #fff; padding: 8px 48px 8px 20px;
+            text-align: center; font-size: 13px; font-weight: 500;
+            position: relative; z-index: 1200;
+            max-height: 120px; overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease, opacity 0.4s ease;
+        }
+        .ann-bar.hidden { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; pointer-events: none; }
+        .ann-bar span { color: var(--orange); font-weight: 700; }
+        .ann-btns { display: flex; justify-content: center; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
+        .ann-btn { padding: 5px 16px; border-radius: 50px; text-decoration: none; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .ann-btn:hover { transform: translateY(-1px); opacity: 0.88; }
+        .ann-btn.call { background: #0099ff; color: #fff; }
+        .ann-btn.email { background: #fff; color: var(--green); }
+        .ann-btn.wa { background: #25D366; color: #fff; }
+        .ann-close {
+            position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
+            background: rgba(255,255,255,0.2); border: none; color: #fff;
+            width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+            font-size: 12px; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .ann-close:hover { background: rgba(255,255,255,0.38); }
+ 
+        /* NAV */
+        nav { background: rgba(255,255,255,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1100; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .nav-wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1.5px; color: var(--black); text-decoration: none; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .logo i { color: var(--orange); font-size: 20px; }
+        .logo span { color: var(--green); }
+        .nav-links { display: flex; list-style: none; gap: 2px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--muted); font-size: 13.5px; font-weight: 500; padding: 6px 12px; border-radius: 6px; transition: all 0.2s; cursor: pointer; white-space: nowrap; }
+        .nav-links a:hover { color: var(--green); background: rgba(26,122,60,0.08); }
+        .nav-links a.active { color: var(--green); background: rgba(26,122,60,0.1); font-weight: 600; }
+ 
+        /* HAMBURGER */
+        .mob-btn { display: none; background: none; border: 1px solid var(--border); color: var(--black); width: 40px; height: 40px; border-radius: 8px; cursor: pointer; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; transition: all 0.2s; }
+        .mob-btn:hover { background: rgba(26,122,60,0.08); border-color: var(--green); }
+ 
+        /* MOBILE DRAWER */
+        .mobile-drawer { display: none; position: fixed; inset: 0; z-index: 2000; }
+        .drawer-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
+        .drawer-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(300px, 85vw); background: #ffffff; border-left: 1px solid var(--border); display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); box-shadow: -4px 0 24px rgba(0,0,0,0.1); }
+        .mobile-drawer.open { display: block; }
+        .mobile-drawer.open .drawer-panel { transform: translateX(0); }
+        .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--green); }
+        .drawer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: #fff; letter-spacing: 1px; }
+        .drawer-logo i { color: var(--orange); margin-right: 6px; }
+        .drawer-close { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .drawer-links { list-style: none; padding: 10px 0; flex: 1; overflow-y: auto; }
+        .drawer-links li a { display: flex; align-items: center; gap: 12px; padding: 13px 20px; color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+        .drawer-links li a i { width: 18px; text-align: center; color: var(--orange); font-size: 14px; }
+        .drawer-links li a:hover, .drawer-links li a.active { color: var(--green); background: rgba(26,122,60,0.07); border-left-color: var(--green); }
+        .drawer-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        .drawer-footer a { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: opacity 0.2s; }
+        .drawer-footer a:hover { opacity: 0.85; }
+        .d-call { background: var(--orange); color: #fff; }
+        .d-wa { background: #25D366; color: #fff; }
+ 
+        /* PAGE SECTIONS */
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+ 
+        /* HERO SLIDER */
+        .hero { position: relative; height: clamp(320px, 52vh, 500px); overflow: hidden; }
+        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .slide-bg { position: absolute; inset: -6%; background-size: cover; background-position: center; will-change: transform, opacity; opacity: 0; }
+        .slide::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,14,11,0.82) 0%, rgba(10,14,11,0.5) 100%); z-index: 1; }
+ 
+        /* Active slide = visible */
+        .slide.active { opacity: 1; }
+        .slide.active .slide-bg { opacity: 1; transform: scale(1); }
+ 
+        /* Entry animations per data-anim */
+        .slide.entering .slide-bg { animation-duration: 1.3s; animation-timing-function: ease; animation-fill-mode: both; }
+        .slide.entering[data-anim="zoom-in"] .slide-bg { animation-name: animZoomIn; }
+        .slide.entering[data-anim="pan-left"] .slide-bg { animation-name: animPanLeft; }
+        .slide.entering[data-anim="pan-right"] .slide-bg { animation-name: animPanRight; }
+        .slide.entering[data-anim="zoom-out"] .slide-bg { animation-name: animZoomOut; }
+        .slide.entering[data-anim="pan-up"] .slide-bg { animation-name: animPanUp; }
+ 
+        @keyframes animZoomIn   { from { transform: scale(1.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes animPanLeft  { from { transform: translateX(5%) scale(1.04); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+        @keyframes animPanRight { from { transform: translateX(-5%) scale(1.04); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+        @keyframes animZoomOut  { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes animPanUp    { from { transform: translateY(4%) scale(1.04); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+ 
+        /* Leaving slide */
+        .slide.leaving { opacity: 0; transition: opacity 0.9s ease; }
+ 
+        /* Slide content */
+        .slide-content { position: relative; z-index: 2; max-width: 800px; padding: 20px 24px; text-align: center; opacity: 0; transform: translateY(18px); transition: opacity 0.7s 0.25s ease, transform 0.7s 0.25s ease; }
+        .slide.active .slide-content, .slide.entering .slide-content { opacity: 1; transform: translateY(0); }
+ 
+        .since-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(240,127,26,0.15); border: 1px solid var(--orange); color: var(--orange); padding: 5px 16px; border-radius: 50px; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+        .slide-content h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 5vw, 56px); line-height: 1.05; color: var(--white); letter-spacing: 1px; margin-bottom: 12px; }
+        .slide-content p { font-size: clamp(13px, 2vw, 16px); color: rgba(255,255,255,0.75); margin-bottom: 22px; font-weight: 300; }
+        .hero-btn { background: var(--orange); color: #fff; padding: 11px 28px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: all 0.25s; font-family: 'Outfit', sans-serif; }
+        .hero-btn:hover { background: var(--orange-deep); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(240,127,26,0.4); }
+ 
+        /* Slider dots */
+        .slider-dots { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 7px; z-index: 10; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; border: none; transition: all 0.35s; }
+        .dot.active { background: var(--orange); width: 22px; border-radius: 4px; }
+ 
+        /* Slider arrows */
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(255,255,255,0.15); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.25s; }
+        .slider-arrow:hover { background: var(--orange); border-color: var(--orange); transform: translateY(-50%) scale(1.1); }
+        .slider-arrow.prev { left: 16px; }
+        .slider-arrow.next { right: 16px; }
+        @media (max-width: 480px) { .slider-arrow { width: 36px; height: 36px; font-size: 13px; } .slider-arrow.prev { left: 10px; } .slider-arrow.next { right: 10px; } }
+ 
+        /* SECTIONS */
+        section { padding: 60px 20px; }
+        .sec-title { text-align: center; margin-bottom: 44px; }
+        .sec-title .label { display: inline-block; background: rgba(232,114,12,0.1); color: var(--orange); border: 1px solid rgba(232,114,12,0.25); padding: 4px 14px; border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+        .sec-title h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4vw, 44px); letter-spacing: 1px; color: var(--black); margin-bottom: 10px; }
+        .sec-title p { color: var(--muted); font-size: 15px; max-width: 520px; margin: 0 auto; font-weight: 400; }
+        /* sec-title inside dark sections stays white */
+        .scrap-types .sec-title h2 { color: #fff; }
+        .scrap-types .sec-title p { color: rgba(255,255,255,0.6); }
+ 
+        /* TABS */
+        .tab-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 36px; flex-wrap: wrap; }
+        .tab-btn { background: #fff; color: var(--muted); border: 1.5px solid #d8e4dc; padding: 9px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 7px; font-family: 'Outfit', sans-serif; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+        .tab-btn:hover { border-color: var(--green); color: var(--green); }
+        .tab-btn.active { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 4px 12px rgba(26,122,60,0.25); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .ctab-content { display: none; }
+        .ctab-content.active { display: block; }
+ 
+        /* CATEGORIES */
+        .categories-section { background: var(--section-alt); }
+        .cat-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 18px; }
+        .cat-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; min-height: 200px; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .cat-card:hover { border-color: rgba(232,114,12,0.4); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); }
+        .cat-img { width: 40%; overflow: hidden; flex-shrink: 0; }
+        .cat-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; display: block; }
+        .cat-card:hover .cat-img img { transform: scale(1.08); }
+        .cat-body { padding: 20px; display: flex; flex-direction: column; justify-content: center; }
+        .cat-body h3 { font-size: 15px; font-weight: 700; color: var(--black); margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
+        .cat-body h3 i { color: var(--orange); }
+        .cat-body p { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; font-weight: 400; }
+        .price-tag { display: inline-block; background: rgba(26,122,60,0.08); border: 1px solid rgba(26,122,60,0.25); color: var(--green); padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+ 
+        /* WHY US */
+        .why-us { background: var(--page-bg); }
+        .features-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .feat-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 20px; text-align: center; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .feat-card:hover { border-color: var(--orange); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(232,114,12,0.12); }
+        .feat-card .icon { width: 52px; height: 52px; border-radius: 12px; background: rgba(232,114,12,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 20px; color: var(--orange); transition: all 0.3s; }
+        .feat-card:hover .icon { background: var(--orange); color: #fff; }
+        .feat-card h3 { font-size: 15px; font-weight: 700; color: var(--black); margin-bottom: 7px; }
+        .feat-card p { font-size: 13px; color: var(--muted); font-weight: 400; }
+ 
+        /* SCRAP TYPES */
+        .scrap-types { background: linear-gradient(160deg, #0f3320 0%, #0a1f11 100%); position: relative; overflow: hidden; }
+        .scrap-types::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 28px 28px; }
+        .scrap-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; position: relative; z-index: 1; }
+        .scrap-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 20px; text-align: center; transition: all 0.3s; position: relative; overflow: hidden; }
+        .scrap-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--green), var(--orange)); transform: scaleX(0); transition: transform 0.3s; }
+        .scrap-card:hover { border-color: rgba(232,114,12,0.4); transform: translateY(-6px); background: rgba(255,255,255,0.09); }
+        .scrap-card:hover::after { transform: scaleX(1); }
+        .scrap-card i { font-size: 32px; color: var(--orange); margin-bottom: 14px; display: block; }
+        .scrap-card h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .scrap-card p { font-size: 12.5px; color: rgba(255,255,255,0.65); line-height: 1.6; font-weight: 300; }
+ 
+        /* LOCATIONS */
+        .locations { background: var(--section-alt); }
+        .loc-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .loc-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 30px 24px; text-align: center; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .loc-card:hover { border-color: var(--green-light); transform: translateY(-4px); box-shadow: 0 10px 24px rgba(26,122,60,0.12); }
+        .loc-icon { width: 58px; height: 58px; border-radius: 50%; background: rgba(26,122,60,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; color: var(--green); }
+        .loc-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; color: var(--black); margin-bottom: 7px; }
+        .loc-card p { font-size: 13px; color: var(--muted); margin-bottom: 16px; font-weight: 400; }
+        .loc-btn { display: inline-flex; align-items: center; gap: 7px; background: #25D366; color: #fff; padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+        .loc-btn:hover { background: #1fba5a; }
+ 
+        /* ABOUT */
+        .about-us { background: #fff; }
+        .about-wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .about-text h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 3.5vw, 42px); letter-spacing: 1px; color: var(--black); margin-bottom: 18px; line-height: 1.1; }
+        .about-text h2 span { color: var(--orange); }
+        .about-text p { color: var(--muted); margin-bottom: 12px; font-size: 14.5px; font-weight: 400; }
+        .about-img img { width: 100%; border-radius: 14px; display: block; }
+ 
+        /* CUSTOMERS */
+        .happiest-customers { background: var(--section-alt); }
+        .cust-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+        .cust-card { aspect-ratio: 1; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; border: 1px solid var(--border); transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .cust-card:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(0,0,0,0.18); border-color: rgba(232,114,12,0.4); }
+        .cust-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .cust-card:hover img { transform: scale(1.1); }
+        .cust-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.15) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; text-align: center; }
+        .cust-name { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.4px; }
+        .cust-tag { font-size: 12px; color: var(--orange); font-weight: 600; margin-top: 3px; }
+ 
+        /* CONTACT */
+        .contact-section { background: var(--page-bg); }
+        .contact-wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; }
+        .contact-info-box, .contact-form-box { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 34px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+        .contact-info-box h3, .contact-form-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; color: var(--black); margin-bottom: 24px; }
+        .c-item { display: flex; gap: 14px; margin-bottom: 20px; align-items: flex-start; }
+        .c-icon { width: 42px; height: 42px; border-radius: 10px; background: rgba(232,114,12,0.08); display: flex; align-items: center; justify-content: center; color: var(--orange); font-size: 16px; flex-shrink: 0; }
+        .c-item h4 { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .c-item p, .c-item a { font-size: 14px; color: var(--text); text-decoration: none; }
+        .c-item a:hover { color: var(--orange); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; letter-spacing: 0.3px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 13px; border: 1px solid #dde5e0; border-radius: 8px; background: #fafcfb; color: var(--text); font-size: 14px; font-family: 'Outfit', sans-serif; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,122,60,0.08); }
+        .form-group select option { background: #fff; color: var(--text); }
+        .form-group textarea { resize: vertical; min-height: 90px; }
+        .submit-btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .submit-btn:hover { background: var(--green-mid); transform: translateY(-1px); }
+ 
+        /* MAP */
+        .map-section { background: var(--section-alt); padding: 0 20px 60px; }
+        .map-wrap { max-width: 1100px; margin: 0 auto; }
+        .map-section iframe { width: 100%; height: 380px; border-radius: 14px; border: 1px solid var(--border); display: block; }
+ 
+        /* INNER HERO */
+        .inner-hero { height: clamp(180px, 28vw, 260px); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; }
+        .inner-hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
+        .inner-hero-content { position: relative; z-index: 1; padding: 0 20px; }
+        .inner-hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 50px); letter-spacing: 2px; color: #fff; }
+        .inner-hero p { font-size: 15px; color: rgba(255,255,255,0.75); margin-top: 7px; font-weight: 300; }
+ 
+        /* FOOTER */
+        footer { background: #0f2318; border-top: 3px solid var(--green); padding: 52px 20px 20px; }
+        .foot-wrap { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1.4fr 1.5fr; gap: 40px; margin-bottom: 36px; }
+        .foot-col h4 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; color: var(--orange); margin-bottom: 16px; }
+        .foot-col p, .foot-col a { font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; display: block; margin-bottom: 7px; font-weight: 300; transition: color 0.2s; }
+        .foot-col a:hover { color: var(--orange); }
+        .foot-view-more { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: var(--orange) !important; font-weight: 600 !important; font-size: 13px !important; }
+        .foot-view-more:hover { color: #fff !important; }
+        .foot-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1.5px; color: #fff; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .foot-logo i { color: var(--orange); }
+        .foot-bottom { max-width: 1280px; margin: 0 auto; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 12px; color: rgba(255,255,255,0.35); }
+ 
+        /* FLOATING BUTTONS — safe above Android nav bar & iPhone home indicator */
+        .float-wa {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: #25D366; color: #fff;
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 18px rgba(37,211,102,0.45);
+            z-index: 9999;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+        .float-wa:hover { transform: scale(1.1); }
+        .float-call {
+            position: fixed;
+            bottom: 160px;
+            right: 20px;
+            background: var(--orange); color: #fff;
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            z-index: 9999;
+            text-decoration: none;
+            animation: pulse 2.5s infinite;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(232,114,12,0.6); } 70% { box-shadow: 0 0 0 13px rgba(232,114,12,0); } 100% { box-shadow: 0 0 0 0 rgba(232,114,12,0); } }
+        /* iOS safe area support */
+        @supports (bottom: env(safe-area-inset-bottom)) {
+            .float-wa  { bottom: calc(env(safe-area-inset-bottom) + 90px); }
+            .float-call{ bottom: calc(env(safe-area-inset-bottom) + 160px); }
+        }
+ 
+        /* CLIENTS STRIP */
+        .clients-strip {
+            background: #fff;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .clients-label {
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--green);
+            padding: 0 20px 0 24px;
+            border-right: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .clients-track-wrap {
+            flex: 1;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        }
+        .clients-track {
+            display: flex;
+            gap: 0;
+            width: max-content;
+            animation: marquee 28s linear infinite;
+        }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .client-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 28px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            white-space: nowrap;
+            border-right: 1px solid var(--border);
+            transition: color 0.2s;
+        }
+        .client-logo:hover { color: var(--green); }
+        .client-logo i { color: var(--orange); font-size: 14px; }
+ 
+        /* RESPONSIVE - Tablet ≤1024 */
+        @media (max-width: 1024px) {
+            .foot-wrap { grid-template-columns: 1fr 1fr; gap: 28px; }
+            .cat-grid { grid-template-columns: 1fr; }
+        }
+        /* Tablet ≤768 */
+        @media (max-width: 768px) {
+            .mob-btn { display: flex; }
+            .nav-links { display: none !important; }
+            section { padding: 48px 16px; }
+            .about-wrap { grid-template-columns: 1fr; }
+            .contact-wrap { grid-template-columns: 1fr; }
+            .scrap-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+            .cust-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .tab-btn { font-size: 12.5px; padding: 8px 14px; }
+        }
+        /* Mobile ≤480 */
+        @media (max-width: 480px) {
+            .ann-bar { font-size: 12px; padding: 8px 44px 8px 12px; }
+            .ann-btn { font-size: 11px; padding: 4px 10px; }
+            .logo { font-size: 20px; }
+            .cat-card { flex-direction: column; min-height: auto; }
+            .cat-img { width: 100%; height: 180px; }
+            .foot-wrap { grid-template-columns: 1fr; gap: 24px; }
+            .scrap-grid { grid-template-columns: 1fr 1fr; }
+            .cust-grid { grid-template-columns: 1fr 1fr; }
+            .loc-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr 1fr; }
+            .float-wa  { width: 52px; height: 52px; right: 14px; font-size: 23px; bottom: 90px; }
+            .float-call{ width: 52px; height: 52px; right: 14px; font-size: 20px; bottom: 158px; }
+        }
+    </style>
+</head>
+<body>
+ 
+<!-- ANNOUNCEMENT BAR -->
+<div class="ann-bar" id="annBar">
+    <p>📦 <strong>Doorstep Scrap Pickup</strong> — Mumbai · Pune · Nashik &nbsp;|&nbsp; <span>Best Market Rates Guaranteed</span></p>
+    <div class="ann-btns">
+        <a href="tel:+918446900843" class="ann-btn call"><i class="fas fa-phone-alt"></i> +91 84469 00843</a>
+        <a href="#" class="ann-btn email" id="annEmail"><i class="fas fa-envelope"></i> Email Us</a>
+        <a href="https://wa.me/918446900843" class="ann-btn wa" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+    <button class="ann-close" onclick="document.getElementById('annBar').classList.add('hidden')" aria-label="Close"><i class="fas fa-times"></i></button>
+</div>
+ 
+<!-- NAV -->
+<nav>
+    <div class="nav-wrap">
+        <a class="logo" href="#" onclick="showPage('home')"><i class="fas fa-recycle"></i> Shivaak <span>Enterprises</span></a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" onclick="showPage('home')" data-page="home" class="active">Home</a></li>
+            <li><a href="#" onclick="showPage('what-we-do')" data-page="what-we-do">What We Do</a></li>
+            <li><a href="#" onclick="showPage('scrap-type')" data-page="scrap-type">Scrap Type</a></li>
+            <li><a href="#" onclick="showPage('location')" data-page="location">Location</a></li>
+            <li><a href="#" onclick="showPage('about-us')" data-page="about-us">About Us</a></li>
+            <li><a href="#" onclick="showPage('customers')" data-page="customers">Customers</a></li>
+            <li><a href="#" onclick="showPage('contact')" data-page="contact">Contact</a></li>
+        </ul>
+        <button class="mob-btn" onclick="openDrawer()" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+    </div>
+</nav>
+ 
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-overlay" onclick="closeDrawer()"></div>
+    <div class="drawer-panel">
+        <div class="drawer-header">
+            <div class="drawer-logo"><i class="fas fa-recycle"></i> Shivaak</div>
+            <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="drawer-links" id="drawerLinks">
+            <li><a href="#" onclick="showPage('home')" data-dpage="home" class="active"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" onclick="showPage('what-we-do')" data-dpage="what-we-do"><i class="fas fa-tasks"></i> What We Do</a></li>
+            <li><a href="#" onclick="showPage('scrap-type')" data-dpage="scrap-type"><i class="fas fa-recycle"></i> Scrap Type</a></li>
+            <li><a href="#" onclick="showPage('location')" data-dpage="location"><i class="fas fa-map-marker-alt"></i> Location</a></li>
+            <li><a href="#" onclick="showPage('about-us')" data-dpage="about-us"><i class="fas fa-info-circle"></i> About Us</a></li>
+            <li><a href="#" onclick="showPage('customers')" data-dpage="customers"><i class="fas fa-star"></i> Customers</a></li>
+            <li><a href="#" onclick="showPage('contact')" data-dpage="contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+        <div class="drawer-footer">
+            <a href="tel:+918446900843" class="d-call"><i class="fas fa-phone-alt"></i> Call Now</a>
+            <a href="https://wa.me/918446900843" class="d-wa" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        </div>
+    </div>
+</div>
+ 
+<!-- HOME -->
+<div id="home" class="page-section active">
+    <section class="hero" style="padding:0;">
+        <div class="slide active" data-anim="zoom-in">
+            <div class="slide-bg" style="background-image: url('https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1920');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-laptop"></i> IT Asset Disposal</div><h1>Sell Your Old Computers & Laptops</h1><p>Get the best price for your old IT equipment. Secure data destruction available.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call Now</a></div>
+        </div>
+        <div class="slide" data-anim="pan-left">
+            <div class="slide-bg" style="background-image: url('https://i.ibb.co/dwdBJWbw/copperwire.jpg');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-coins"></i> Best Rates</div><h1>Copper & Wire Scrap Buyers</h1><p>We buy all types of copper wires, cables, and aluminum at highest market rates.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call Now</a></div>
+        </div>
+        <div class="slide" data-anim="pan-right">
+            <div class="slide-bg" style="background-image: url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-cubes"></i> Metal Scrap</div><h1>Ferrous & Non-Ferrous Scrap</h1><p>Turn your industrial metal waste into cash. Iron, Steel, Aluminum, and more.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call Now</a></div>
+        </div>
+        <div class="slide" data-anim="zoom-out">
+            <div class="slide-bg" style="background-image: url('https://images.unsplash.com/photo-1767739791250-f972ca75c60e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8ZmFjdG9yeSUyMG1hY2hpbmVyeSUyMHBhcnRzfGVufDB8fDB8fHww');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-cogs"></i> Industrial</div><h1>Factory Machinery & Parts</h1><p>We purchase old factory machinery, gears, bearings, and heavy industrial scrap.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call Now</a></div>
+        </div>
+        <div class="slide" data-anim="pan-up">
+            <div class="slide-bg" style="background-image: url('https://images.jdmagicbox.com/quickquotes/images_main/ups-scrap-battery-2220024539-ic4h0b63.jpg');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-car-battery"></i> Power Storage</div><h1>Battery Recycling Experts</h1><p>Car batteries, inverter batteries, and UPS batteries. Safe disposal guaranteed.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call Now</a></div>
+        </div>
+        <div class="slide" data-anim="pan-right">
+            <div class="slide-bg" style="background-image: url('https://i.ibb.co/prZFQcM8/Whats-App-Image-2026-03-27-at-2-17-14-PM.jpg');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-cubes"></i> Aluminum Ingot</div><h1>Aluminum Waste Recycled</h1><p>Turn your industrial metal waste into cash. Aluminum, Steel, Iron, and more.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call Now</a></div>
+        </div>
+        <div class="slide" data-anim="pan-left">
+            <div class="slide-bg" style="background-image: url('https://i.ibb.co/999QmVhF/Mivan-Construction-Aluminum.jpg');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-coins"></i> Construction</div><h1>Frameworks & Pipes</h1><p>We buy all types of Frameworks, Pipes, and Scarps at highest market rates.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call Now</a></div>
+        </div>
+        <div class="slide" data-anim="zoom-in">
+            <div class="slide-bg" style="background-image: url('https://i.ibb.co/3YSc7Rxg/Untitled-design-1.png');"></div>
+            <div class="slide-content"><div class="since-badge"><i class="fas fa-recycle"></i> Since 2018</div><h1>Shivaak Enterprises</h1><p>Your Trusted Partner for Scrap Collection from Doorstep in Mumbai, Pune & Nashik.</p><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Call: +91 84469 00843</a></div>
+        </div>
+        <div class="slider-dots" id="sliderDots"></div>
+        <button class="slider-arrow prev" id="slidePrev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+        <button class="slider-arrow next" id="slideNext" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+    </section>
+ 
+    <!-- CLIENTS STRIP -->
+    <div class="clients-strip">
+        <div class="clients-label">Trusted By</div>
+        <div class="clients-track-wrap">
+            <div class="clients-track">
+                <div class="client-logo"><i class="fas fa-building"></i> Godrej Properties</div>
+                <div class="client-logo"><i class="fas fa-city"></i> Lodha Group</div>
+                <div class="client-logo"><i class="fas fa-car"></i> Tata Motors</div>
+                <div class="client-logo"><i class="fas fa-laptop"></i> Tech Mahindra</div>
+                <div class="client-logo"><i class="fas fa-code"></i> Infosys</div>
+                <div class="client-logo"><i class="fas fa-microchip"></i> HCL Technologies</div>
+                <div class="client-logo"><i class="fas fa-server"></i> IBM</div>
+                <div class="client-logo"><i class="fas fa-university"></i> IndusInd Bank</div>
+                <div class="client-logo"><i class="fas fa-hotel"></i> JW Marriott</div>
+                <div class="client-logo"><i class="fas fa-concierge-bell"></i> Ramada Wyndham</div>
+                <div class="client-logo"><i class="fas fa-gem"></i> Surat Diamond Bourse</div>
+                <div class="client-logo"><i class="fas fa-tire"></i> Dunlop India</div>
+                <!-- Duplicate for seamless loop -->
+                <div class="client-logo"><i class="fas fa-building"></i> Godrej Properties</div>
+                <div class="client-logo"><i class="fas fa-city"></i> Lodha Group</div>
+                <div class="client-logo"><i class="fas fa-car"></i> Tata Motors</div>
+                <div class="client-logo"><i class="fas fa-laptop"></i> Tech Mahindra</div>
+                <div class="client-logo"><i class="fas fa-code"></i> Infosys</div>
+                <div class="client-logo"><i class="fas fa-microchip"></i> HCL Technologies</div>
+                <div class="client-logo"><i class="fas fa-server"></i> IBM</div>
+                <div class="client-logo"><i class="fas fa-university"></i> IndusInd Bank</div>
+                <div class="client-logo"><i class="fas fa-hotel"></i> JW Marriott</div>
+                <div class="client-logo"><i class="fas fa-concierge-bell"></i> Ramada Wyndham</div>
+                <div class="client-logo"><i class="fas fa-gem"></i> Surat Diamond Bourse</div>
+                <div class="client-logo"><i class="fas fa-tire"></i> Dunlop India</div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- CATEGORIES -->
+    <section class="categories-section">
+        <div class="sec-title"><div class="label">What We Buy</div><h2>Our Scrap Categories</h2><p>We collect all types of scrap from homes, offices, and industries</p></div>
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="office"><i class="fas fa-building"></i> Office Scrap</button>
+            <button class="tab-btn" data-tab="industrial"><i class="fas fa-industry"></i> Industrial Scrap</button>
+            <button class="tab-btn" data-tab="home"><i class="fas fa-hard-hat"></i> Application Industries</button>
+        </div>
+        <div class="tab-content active" id="tab-office">
+            <div class="cat-grid">
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1717667745934-53091623e8ee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8c29mdHdhcmUlMjB3YXN0ZXxlbnwwfHwwfHx8MA%3D%3D" alt="IT Software" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-microchip"></i> IT Companies & Software Offices Scrap</h3><p>Workstations, Pedestal Box's, Chairs, Tables, Cubicles, Aluminum Partitions, Wooden Partitions, Glass, False Ceiling, Electrical light Fitting, AC Units, Carpet, Pantry Furniture's, Display Boards, Doors, Interior Works, Designer furniture, Vanished Blinds, Photo Frames, Conference Tables and Chairs, Show Items and other Materials also.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1634586648651-f1fb9ec10d90?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZGVtb2xpdGlvbnxlbnwwfHwwfHx8MA%3D%3D" alt="Office Dismantling" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-building"></i> Office & Building Dismantling Scrap</h3><p>IT Software Demolishing, Companies Demolishing, Complex Demolishing, Apartment Demolishing, Offices Demolishing, Warehouse Demolishing, Old Buildings Demolishing, Renovation Works, Factories Demolishing, Industries Demolishing, Interior Dismantling, Clearing Debris and Waste Material's and other Trunkey Projects.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="data:image/jpeg;base64,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" alt="DG Generator" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-bolt"></i> DG Set Generator Scrap</h3><p>Used and Scrap Diesel and Petrol Generators, Motors, Engines, Alternate, AMF Panels, Control Panels, Power Cables, Aluminum and Copper Accessories, OLD Generators Scrap, Generators Parts Scrap, Mini Generators, Tanks, All Types Used and Damage DG power Generators, Batteries, Engine, Alternate, Gearbox and others items.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.jdmagicbox.com/quickquotes/images_main/ups-scrap-battery-2220024539-ic4h0b63.jpg" alt="UPS Battery" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-car-battery"></i> UPS & Batteries Scrap</h3><p>Used and Scrap UPS, Invertors, Power Backup Equipment's, Batteries, Cables, Power Control Controllers, UPS DB, Electrical Wiring and Cables, Relay Items, UPS Accessories, UPS Racks, Damage UPS Systems, E-waste Scrap, PCB Waste for Recycle, Batteries Recycle, Lead Scrap Recycle, UPS Scrap and Damage Items, and Others Items.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://media.istockphoto.com/id/2224309665/photo/stack-of-discarded-air-conditioner-units-and-parts-beside-urban-building.webp?a=1&b=1&s=612x612&w=0&k=20&c=iJul-N1V30zEQsQktir2Ww6OD9ptrLHqNeSzB4ZoMZA=" alt="AC Scrap" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-snowflake"></i> AC Scrap</h3><p>All types of AC Plants, Old Air Condition, Indoor and Outdoor ACs, Indian or Imported AC, Window and Chiller Plant, Cooling Towers, Ductable AC, Chiller Plants, Window AC and Split AC, Industrial AC Plant, Chillers, Old Air Conditioner, Damage Chillers, Blower, Motors, Copper Piping, AC Compressor, and Others AC Unit Scrap Etc.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1717667745852-a5bd6876c1de?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGNhYmxlJTIwc2NyYXB8ZW58MHx8MHx8fDA%3D" alt="Cables" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-ethernet"></i> Cables & Wires Scrap</h3><p>All types of electrical cables, ethernet cables, copper wiring, power cables, aluminum conductors and wire scrap.</p><span class="price-tag">Best Market Price</span></div></div>
+            </div>
+        </div>
+        <div class="tab-content" id="tab-industrial">
+            <div class="cat-grid">
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1767281075989-7571356d477e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZmFjdG9yeSUyMG1hY2hpbmVyeSUyMHNjcmFwfGVufDB8fDB8fHww" alt="Machinery" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-cogs"></i> Factory Machinery Scrap</h3><p>Old factory machinery, production line equipment, industrial tools, motors, pumps, compressors and all types of heavy plant machinery.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500" alt="Ferrous Non Ferrous" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-cubes"></i> Ferrous & Non-Ferrous Scrap</h3><p>Copper Scrap, Brass Scrap, Iron Scrap, Steel Scrap, Aluminum Scrap, MS Scrap, GI Pipes Scrap, Angles Scrap, MS Pipes Scrap, Rusted Metal Scrap, Aluminum Pipe Scrap, Copper Pipe Scrap, SS Pipe Scrap, Metal Sheet Scrap, Aluminum Sheet Scrap, HMS Scrap, Cast Iron, Metal Scrap, MS Sheets, and others types of Scrap Materials.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1766769673659-d797245b1ba4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWFjaGluZXJ5JTIwcGFydHMlMjBzY3JhcHxlbnwwfHwwfHx8MA%3D%3D" alt="Parts" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-tools"></i> Machinery Parts Scrap</h3><p>Old machinery parts, components, gears, bearings, spare parts, shafts, pulleys, valves and all types of industrial mechanical parts scrap.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500" alt="Warehouse" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-warehouse"></i> Warehouse Scrap</h3><p>Old inventory, pallets, racking systems, storage shelves, warehouse equipment, packing materials and industrial storage scrap.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://i.ibb.co/x8GXxRBK/copperbrass.jpg" alt="Copper Brass All Metal" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-coins"></i> Copper, Brass & All Types Metal in Pune</h3><p>We purchase all types of metal scrap — iron, steel, copper, aluminum, and brass — at the best market rates. Serving industrial, commercial, and residential clients, we provide fast pickup, eco-friendly recycling, and responsible disposal.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1769012334604-8b3bf24b474c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHN0ZWVsJTIwc2NyYXB8ZW58MHx8MHx8fDA%3D" alt="Steel" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-layer-group"></i> Steel & Iron Scrap</h3><p>Construction steel, structural steel, TMT bars, iron scrap, MS plates, angles, channels and all types of heavy ferrous metal scrap.</p><span class="price-tag">Best Market Price</span></div></div>
+            </div>
+        </div>
+        <div class="tab-content" id="tab-home">
+            <div class="cat-grid">
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1565866926760-213f0b57e8b6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fG9pbCUyMGluZHVzdHJ5fGVufDB8fDB8fHww" alt="Oil Gas" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-oil-can"></i> Oil & Gas Industries</h3><p>Scrap from oil rigs, refineries, pipelines, storage tanks, and drilling equipment used in petroleum sector.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1736820712641-56badd26f83b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGNoZW1pY2FsJTIwaW5kdXN0cnl8ZW58MHx8MHx8fDA%3D" alt="Chemical" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-flask"></i> Chemical Industries</h3><p>Industrial scrap from chemical plants — reactors, vessels, valves, and processing equipment.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1738528575208-b9ccdca8acaf?q=80&w=326&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Construction" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-hard-hat"></i> Construction Industries</h3><p>Steel TMT bars, iron rods, shuttering plates, scaffolding, and all construction site scrap metal.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1624283808493-9a638e907905?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBpcGVsaW5lfGVufDB8fDB8fHww" alt="Offshore" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-water"></i> Offshore Pipelines & Pipe Works</h3><p>Scrap from underwater pipelines, offshore platforms, marine pipe systems and subsea equipment.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1584060330377-3fd93ef4e991?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGV0cm9jaGVtaWNhbHxlbnwwfHwwfHx8MA%3D%3D" alt="Petrochemical" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-atom"></i> Petrochemical Industry</h3><p>Scrap from petrochemical complexes — heat exchangers, columns, pressure vessels, and piping systems.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1760887136937-f46d87a05d33?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNoaXBidWlsZGluZyUyMGluZHVzdHJpZXN8ZW58MHx8MHx8fDA%3D" alt="Shipbuilding" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-ship"></i> Shipbuilding Industries</h3><p>Marine grade steel, hull plates, ship parts, anchor chains and shipyard structural scrap.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1598023707207-276835c2b5fe?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aHlkcmF1bGljfGVufDB8fDB8fHww" alt="Hydraulic" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-cog"></i> Hydraulic Applications</h3><p>Old hydraulic cylinders, pumps, motors, valves, and heavy-duty hydraulic system components.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1613929906260-c9377d135547?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBpcGluZ3xlbnwwfHwwfHx8MA%3D%3D" alt="Piping" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-stream"></i> Piping Systems</h3><p>GI pipes, stainless steel pipes, carbon steel pipelines, flanges, elbows, and fittings scrap.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1629447388369-760612337eff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHJlZmluaW5nJTIwaW5kdXN0cnl8ZW58MHx8MHx8fDA%3D" alt="Refining" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-burn"></i> Refining Industry</h3><p>Scrap from petroleum refineries — distillation columns, catalytic crackers, and process vessels.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1565183928294-7063f23ce0f8?w=500" alt="Food Processing" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-utensils"></i> Food Processing Industry</h3><p>SS food-grade scrap from processing lines, conveyors, food machinery, storage tanks and vessels.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1758270804188-8ca0b6d254bc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHB1bHAlMjAlMjYlMjBwYXBlciUyMGluZHVzdHJ5fGVufDB8fDB8fHww" alt="Pulp Paper" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-scroll"></i> Pulp & Paper Industry</h3><p>Heavy scrap from paper mills — rollers, dryers, grinding machines, and industrial paper equipment.</p><span class="price-tag">Best Market Price</span></div></div>
+                <div class="cat-card"><div class="cat-img"><img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500" alt="Power Plant" loading="lazy"></div><div class="cat-body"><h3><i class="fas fa-bolt"></i> Power Plant Industry</h3><p>Scrap from thermal & solar power plants — turbines, generators, transformers, and transmission towers.</p><span class="price-tag">Best Market Price</span></div></div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- WHY US -->
+    <section class="why-us">
+        <div class="sec-title"><div class="label">Why Shivaak</div><h2>Why Choose Us?</h2><p>Comprehensive scrap collection with commitment to sustainability and fair pricing</p></div>
+        <div class="features-grid">
+            <div class="feat-card"><div class="icon"><i class="fas fa-truck"></i></div><h3>Doorstep Pickup</h3><p>Free pickup from your location — no hassle at all</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-rupee-sign"></i></div><h3>Best Prices</h3><p>Competitive & transparent market rates always</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-clock"></i></div><h3>Quick Service</h3><p>Same day pickup available on call</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-leaf"></i></div><h3>Eco-Friendly</h3><p>Certified sustainable recycling practices</p></div>
+        </div>
+    </section>
+ 
+    <!-- LOCATIONS PREVIEW -->
+    <section class="locations">
+        <div class="sec-title"><div class="label">We Serve</div><h2>Service Locations</h2><p>Covering major cities across Maharashtra</p></div>
+        <div class="loc-grid">
+            <div class="loc-card"><div class="loc-icon"><i class="fas fa-city"></i></div><h3>Mumbai</h3><p>Complete coverage across all areas of Mumbai</p></div>
+            <div class="loc-card"><div class="loc-icon"><i class="fas fa-building"></i></div><h3>Pune</h3><p>Our headquarters — HQ & prime operations</p></div>
+            <div class="loc-card"><div class="loc-icon"><i class="fas fa-landmark"></i></div><h3>Nashik</h3><p>Expanding service network in Nashik</p></div>
+        </div>
+    </section>
+</div>
+ 
+<!-- WHAT WE DO -->
+<div id="what-we-do" class="page-section">
+    <div class="inner-hero" style="background-image: url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1920');"><div class="inner-hero-content"><h1>What We Do</h1><p>Comprehensive scrap collection and recycling solutions</p></div></div>
+    <section class="why-us">
+        <div class="sec-title"><div class="label">Services</div><h2>Our Services</h2></div>
+        <div class="features-grid">
+            <div class="feat-card"><div class="icon"><i class="fas fa-hand-holding-usd"></i></div><h3>Scrap Buying</h3><p>We purchase all types of scrap at competitive market prices.</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-truck-loading"></i></div><h3>Doorstep Collection</h3><p>Our team comes to your location for hassle-free pickup.</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-sort-amount-up"></i></div><h3>Sorting & Processing</h3><p>We professionally sort and categorize scrap materials.</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-recycle"></i></div><h3>Recycling</h3><p>Partnering with certified recycling facilities.</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-warehouse"></i></div><h3>Warehouse Clearance</h3><p>Specialized service for companies and warehouses.</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-industry"></i></div><h3>Industrial Solutions</h3><p>Custom scrap management for factories and industrial units.</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-laptop"></i></div><h3>IT Asset Disposal</h3><p>Secure disposal with data destruction certification.</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-certificate"></i></div><h3>Certified Processing</h3><p>All processes follow environmental regulations.</p></div>
+        </div>
+    </section>
+</div>
+ 
+<!-- SCRAP TYPE -->
+<div id="scrap-type" class="page-section">
+    <div class="inner-hero" style="background-image: url('https://images.unsplash.com/photo-1565784171408-4d9a08e48a27?w=1920');"><div class="inner-hero-content"><h1>Scrap We Buy</h1><p>Turn your waste into wealth — we accept all major scrap categories</p></div></div>
+    <section class="scrap-types">
+        <div class="sec-title"><div class="label">All Categories</div><h2>Our Acceptance Categories</h2><p>From household junk to industrial waste — highest market rates</p></div>
+        <div class="scrap-grid">
+            <div class="scrap-card"><i class="fas fa-snowflake"></i><h3>AC Scrap</h3><p>All types of AC Plants, Split ACs, Window ACs, Chiller Plants, Cooling Towers, Industrial AC, Compressors, Copper Coils & Refrigerant Gas.</p></div>
+            <div class="scrap-card"><i class="fas fa-car-battery"></i><h3>Battery Scrap</h3><p>Car Batteries, Inverter Batteries, UPS Batteries, VRLA, Lithium-ion, Lead-acid batteries and all types of battery scrap.</p></div>
+            <div class="scrap-card"><i class="fas fa-microchip"></i><h3>Electronic Scrap</h3><p>Computers, Laptops, Mobile Phones, TVs, LED Screens, PCB boards, Electrical Fittings, Cables, Wires and all E-waste.</p></div>
+            <div class="scrap-card"><i class="fas fa-cubes"></i><h3>Ferrous & Non-Ferrous Scrap</h3><p>Copper, Brass, Iron, Steel, Aluminum, MS Scrap, GI Pipes, HMS Scrap, Cast Iron, Metal Sheets and all types of metal scrap.</p></div>
+            <div class="scrap-card"><i class="fas fa-server"></i><h3>IT Sector All Scrap</h3><p>Old Servers, Networking Gear, Routers, Switches, Data Center equipment, Workstations, Pedestal Boxes, IT hardware and all IT scrap.</p></div>
+            <div class="scrap-card"><i class="fas fa-warehouse"></i><h3>Company Warehouse Scrap</h3><p>Heavy Machinery, Pallets, Racking Systems, Storage Tanks, Warehouse equipment, Old Inventory and all warehouse scrap material.</p></div>
+            <div class="scrap-card"><i class="fas fa-industry"></i><h3>Factory Industrial Scrap</h3><p>Factory shutdown scrap, Heavy melting scrap, Machinery Parts, Pipes, Sheets, Structures and all industrial scrap materials.</p></div>
+            <div class="scrap-card"><i class="fas fa-hotel"></i><h3>Hotel Scrap</h3><p>Old hotel furniture, kitchen equipment, AC units, generators, electrical fittings, plumbing fixtures and all hospitality scrap.</p></div>
+            <div class="scrap-card"><i class="fas fa-university"></i><h3>Bank Scrap</h3><p>Old ATM machines, server equipment, office furniture, AC units, UPS systems, electrical items and all bank dismantling scrap.</p></div>
+            <div class="scrap-card"><i class="fas fa-building"></i><h3>Office Scrap</h3><p>IT Software Demolishing, Office Dismantling, Furniture, AC Units, DG Sets, UPS Batteries, Cables and all office scrap materials.</p></div>
+            <div class="scrap-card"><i class="fas fa-bolt"></i><h3>DG Set & Generator Scrap</h3><p>Diesel & Petrol Generators, AMF Panels, Control Panels, Power Cables, Alternators, Engine Blocks and all generator scrap.</p></div>
+            <div class="scrap-card"><i class="fas fa-plug"></i><h3>Cable & Wire Scrap</h3><p>Power Cables, Ethernet Cables, Copper Wiring, Aluminum Conductors, Electrical Wires and all types of cable & wire scrap.</p></div>
+        </div>
+    </section>
+</div>
+ 
+<!-- LOCATION -->
+<div id="location" class="page-section">
+    <div class="inner-hero" style="background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1920');"><div class="inner-hero-content"><h1>Service Locations</h1><p>Serving customers across Maharashtra</p></div></div>
+    <section class="locations">
+        <div class="sec-title"><div class="label">Coverage</div><h2>Where We Operate</h2></div>
+        <div class="loc-grid">
+            <div class="loc-card"><div class="loc-icon"><i class="fas fa-city"></i></div><h3>Mumbai</h3><p>Complete coverage including Andheri, Borivali, Thane, Navi Mumbai</p><a href="https://wa.me/918446900843?text=Hi, I need scrap pickup in Mumbai" class="loc-btn" target="_blank"><i class="fab fa-whatsapp"></i> Book Pickup</a></div>
+            <div class="loc-card"><div class="loc-icon"><i class="fas fa-building"></i></div><h3>Pune</h3><p>Our headquarters serving Hinjewadi, Wakad, Pimpri-Chinchwad, Talwade</p><a href="https://wa.me/918446900843?text=Hi, I need scrap pickup in Pune" class="loc-btn" target="_blank"><i class="fab fa-whatsapp"></i> Book Pickup</a></div>
+            <div class="loc-card"><div class="loc-icon"><i class="fas fa-landmark"></i></div><h3>Nashik</h3><p>Expanding service network covering Nashik city, MIDC areas</p><a href="https://wa.me/918446900843?text=Hi, I need scrap pickup in Nashik" class="loc-btn" target="_blank"><i class="fab fa-whatsapp"></i> Book Pickup</a></div>
+        </div>
+    </section>
+    <div class="map-section">
+        <div class="map-wrap">
+            <div class="sec-title"><div class="label">Map</div><h2>Coverage Area</h2><p>Doorstep service across all mentioned locations</p></div>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3780.210080612261!2d73.78523117519488!3d18.68052778244247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDQwJzQ5LjkiTiA3M8KwNDcnMTYuMSJF!5e0!3m2!1sen!2sin!4v1711510000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+ 
+<!-- ABOUT -->
+<div id="about-us" class="page-section">
+    <div class="inner-hero" style="background-image: url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920');"><div class="inner-hero-content"><h1>About Us</h1><p>Your trusted partner in scrap collection since 2018</p></div></div>
+    <section class="about-us">
+        <div class="about-wrap">
+            <div class="about-text">
+                <h2>Welcome to <span>Shivaak</span> Enterprises</h2>
+                <p>Shivaak Enterprises is a leading scrap collection and recycling company based in Pune, Maharashtra. We specialize in buying all types of scrap materials from households, offices, warehouses, factories, and industrial units.</p>
+                <p>With years of experience in the scrap industry, we have built a reputation for offering competitive prices, reliable service, and environmentally responsible recycling practices.</p>
+                <p>Our mission is to contribute to a cleaner environment by promoting recycling and sustainable waste management practices.</p>
+                <div style="margin-top: 24px;"><a href="tel:+918446900843" class="hero-btn"><i class="fas fa-phone-alt"></i> Contact Us Today</a></div>
+            </div>
+            <div class="about-img"><img src="https://plus.unsplash.com/premium_vector-1719106010811-c0ba6723f329?q=80&w=580&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Scrap Recycling" loading="lazy"></div>
+        </div>
+    </section>
+    <section class="why-us" style="padding-top: 0;">
+        <div class="sec-title"><div class="label">Values</div><h2>Our Core Values</h2></div>
+        <div class="features-grid">
+            <div class="feat-card"><div class="icon"><i class="fas fa-handshake"></i></div><h3>Trust</h3><p>Transparent dealings and honest pricing always</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-leaf"></i></div><h3>Sustainability</h3><p>Environmentally responsible recycling practices</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-users"></i></div><h3>Customer Focus</h3><p>Putting customer satisfaction first</p></div>
+            <div class="feat-card"><div class="icon"><i class="fas fa-medal"></i></div><h3>Quality</h3><p>Professional service excellence every time</p></div>
+        </div>
+    </section>
+</div>
+ 
+<!-- CUSTOMERS -->
+<div id="customers" class="page-section">
+    <div class="inner-hero" style="background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920');"><div class="inner-hero-content"><h1>Valued Clients</h1><p>Trusted by top companies across Maharashtra</p></div></div>
+    <section class="happiest-customers">
+        <div class="sec-title"><div class="label">Clientele</div><h2>Happiest Customers</h2><p>We are proud to serve these renowned organizations</p></div>
+        <div class="tab-nav">
+            <button class="tab-btn active" data-ctab="real-estate"><i class="fas fa-building"></i> Real Estate</button>
+            <button class="tab-btn" data-ctab="automotive"><i class="fas fa-car"></i> Automotive</button>
+            <button class="tab-btn" data-ctab="it"><i class="fas fa-laptop"></i> IT & Tech</button>
+            <button class="tab-btn" data-ctab="hospitality"><i class="fas fa-hotel"></i> Hospitality</button>
+        </div>
+        <div class="ctab-content active" id="ctab-real-estate"><div class="cust-grid">
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500" alt="Godrej" loading="lazy"><div class="cust-overlay"><div class="cust-name">Godrej Properties</div><div class="cust-tag">Real Estate</div></div></div>
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500" alt="Lodha" loading="lazy"><div class="cust-overlay"><div class="cust-name">Lodha Group</div><div class="cust-tag">Building A Better Life</div></div></div>
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1772047678503-87ca34f8a0da?w=500" alt="SDB" loading="lazy"><div class="cust-overlay"><div class="cust-name">Surat Diamond Bourse</div><div class="cust-tag">Gems & Jewellery</div></div></div>
+        </div></div>
+        <div class="ctab-content" id="ctab-automotive"><div class="cust-grid">
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1611902029807-570da6122e2e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dGF0YXxlbnwwfHwwfHx8MA%3D%3D" alt="Tata" loading="lazy"><div class="cust-overlay"><div class="cust-name">Tata Motors</div><div class="cust-tag">Automotive</div></div></div>
+            <div class="cust-card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdB36AU7SRfpEgstUtaA60VXBK5h6UwlGgMg&s" alt="Dunlop" loading="lazy"><div class="cust-overlay"><div class="cust-name">Dunlop India Limited</div><div class="cust-tag">Public Enterprises</div></div></div>
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVyY2VkZXMlMjBiZW56fGVufDB8fDB8fHww" alt="Mercedes" loading="lazy"><div class="cust-overlay"><div class="cust-name">Mercedes-Benz Group AG</div><div class="cust-tag">Luxury Automotive</div></div></div>
+        </div></div>
+        <div class="ctab-content" id="ctab-it"><div class="cust-grid">
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=500" alt="IGW" loading="lazy"><div class="cust-overlay"><div class="cust-name">IGW India Technology</div><div class="cust-tag">Private Limited</div></div></div>
+            <div class="cust-card"><img src="https://static.ambitionbox.com/api/v2/photo/dlZCc3RURnFmOGU0WVZjTVhlMjQ4dz09" alt="TechM" loading="lazy"><div class="cust-overlay"><div class="cust-name">Tech Mahindra</div><div class="cust-tag">IT Services</div></div></div>
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500" alt="Infosys" loading="lazy"><div class="cust-overlay"><div class="cust-name">Infosys</div><div class="cust-tag">IT Consulting</div></div></div>
+            <div class="cust-card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-yTvYOKyoVEhIq-gVqzX8Qx7Gu9trgWZm6w&s" alt="HCL" loading="lazy"><div class="cust-overlay"><div class="cust-name">HCL Technologies</div><div class="cust-tag">Global Tech</div></div></div>
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?w=500" alt="IBM" loading="lazy"><div class="cust-overlay"><div class="cust-name">IBM</div><div class="cust-tag">Solutions</div></div></div>
+            <div class="cust-card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr2TQuWsd7ZQxPGZRKHdF_ycXZXNOolYYAbQ&s" alt="IndusInd" loading="lazy"><div class="cust-overlay"><div class="cust-name">IndusInd Bank Ltd</div><div class="cust-tag">Financial Services</div></div></div>
+        </div></div>
+        <div class="ctab-content" id="ctab-hospitality"><div class="cust-grid">
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Ramada" loading="lazy"><div class="cust-overlay"><div class="cust-name">Ramada by Wyndham</div><div class="cust-tag">Hospitality</div></div></div>
+            <div class="cust-card"><img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500" alt="Marriott" loading="lazy"><div class="cust-overlay"><div class="cust-name">JW Marriott Hotel</div><div class="cust-tag">Luxury Hotels</div></div></div>
+        </div></div>
+    </section>
+</div>
+ 
+<!-- CONTACT -->
+<div id="contact" class="page-section">
+    <div class="inner-hero" style="background-image: url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920');"><div class="inner-hero-content"><h1>Contact Us</h1><p>Get in touch for scrap pickup or inquiries</p></div></div>
+    <section class="contact-section">
+        <div class="sec-title"><div class="label">Get In Touch</div><h2>Reach Out To Us</h2></div>
+        <div class="contact-wrap">
+            <div class="contact-info-box">
+                <h3>Contact Details</h3>
+                <div class="c-item"><div class="c-icon"><i class="fas fa-map-marker-alt"></i></div><div><h4>Address</h4><p>Gate No 162 A, Sr. No. 366<br>Ganesh Nagar, Talwade<br>Pune - 411062, Maharashtra</p></div></div>
+                <div class="c-item"><div class="c-icon"><i class="fas fa-phone-alt"></i></div><div><h4>Phone</h4><a href="tel:+918446900843">+91 84469 00843</a></div></div>
+                <div class="c-item"><div class="c-icon"><i class="fas fa-envelope"></i></div><div><h4>Email</h4><a href="#" id="contactEmail">Loading...</a></div></div>
+                <div class="c-item"><div class="c-icon" style="background:rgba(37,211,102,0.1);color:#25D366;"><i class="fab fa-whatsapp"></i></div><div><h4>WhatsApp</h4><a href="https://wa.me/918446900843" target="_blank" style="color:#25D366;">Chat on WhatsApp</a></div></div>
+            </div>
+            <div class="contact-form-box">
+                <h3>Send a Message</h3>
+                <form onsubmit="handleSubmit(event)">
+                    <div class="form-group"><label>Your Name *</label><input type="text" name="name" required placeholder="Enter your name"></div>
+                    <div class="form-group"><label>Phone Number *</label><input type="tel" name="phone" required placeholder="Enter your phone"></div>
+                    <div class="form-group"><label>Email Address</label><input type="email" name="email" placeholder="Enter your email"></div>
+                    <div class="form-group"><label>Location *</label><select name="location" required><option value="">Select your city</option><option>Mumbai</option><option>Pune</option><option>Nashik</option><option>Other</option></select></div>
+                    <div class="form-group"><label>Scrap Type</label><select name="scrap-type"><option value="">Select scrap type</option><option>AC Scrap</option><option>Battery Scrap</option><option>Electronic Scrap</option><option>Ferrous & Non-Ferrous</option><option>IT Sector Scrap</option><option>Warehouse Scrap</option><option>Industrial Scrap</option><option>Other</option></select></div>
+                    <div class="form-group"><label>Message *</label><textarea name="message" required placeholder="Describe your scrap items or inquiry"></textarea></div>
+                    <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Send via WhatsApp</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <div class="map-section">
+        <div class="map-wrap">
+            <div class="sec-title"><div class="label">Map</div><h2>Our Location</h2><p>Talwade, Pune — Maharashtra</p></div>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3780.210080612261!2d73.78523117519488!3d18.68052778244247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTjCsDQwJzQ5LjkiTiA3M8KwNDcnMTYuMSJF!5e0!3m2!1sen!2sin!4v1711510000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+ 
+<!-- FOOTER -->
+<footer>
+    <div class="foot-wrap">
+        <div class="foot-col">
+            <div class="foot-logo"><i class="fas fa-recycle"></i> Shivaak Enterprises</div>
+            <p>Since 2018, turning your industrial and household scrap into profit. Fair, transparent pricing and reliable doorstep pickup services across Maharashtra.</p>
+        </div>
+        <div class="foot-col">
+            <h4>Quick Links</h4>
+            <a href="#" onclick="showPage('home')">Home</a>
+            <a href="#" onclick="showPage('what-we-do')">What We Do</a>
+            <a href="#" onclick="showPage('scrap-type')">Scrap Type</a>
+            <a href="#" onclick="showPage('location')">Location</a>
+            <a href="#" onclick="showPage('about-us')">About Us</a>
+            <a href="#" onclick="showPage('customers')">Happy Customers</a>
+            <a href="#" onclick="showPage('contact')">Contact Us</a>
+        </div>
+        <div class="foot-col">
+            <h4>Scrap We Buy</h4>
+            <a href="#" onclick="showPage('scrap-type')">1. AC Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">2. Battery Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">3. Electronic Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">4. Ferrous & Non-Ferrous Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">5. IT Sector All Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">6. Company Warehouse Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">7. Factory Industrial Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">8. Hotel Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">9. Bank Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')">10. Office Scrap</a>
+            <a href="#" onclick="showPage('scrap-type')" class="foot-view-more"><i class="fas fa-plus-circle"></i> View More</a>
+        </div>
+        <div class="foot-col">
+            <h4>Contact Info</h4>
+            <p><i class="fas fa-map-marker-alt" style="color:var(--orange);margin-right:6px;"></i> Gate No 162 A, Ganesh Nagar, Talwade, Pune - 411062</p>
+            <a href="tel:+918446900843"><i class="fas fa-phone" style="color:var(--orange);margin-right:6px;"></i> +91 84469 00843</a>
+            <a href="#" id="footerEmail"><i class="fas fa-envelope" style="color:var(--orange);margin-right:6px;"></i> <span id="footerEmailText">Loading...</span></a>
+        </div>
+    </div>
+    <div class="foot-bottom"><p>&copy; 2026 Shivaak Enterprises. All Rights Reserved. | Scrap Collector from Doorstep</p></div>
+</footer>
+ 
+<!-- FLOATING -->
+<a href="tel:+918446900843" class="float-call"><i class="fas fa-phone-alt"></i></a>
+<a href="https://wa.me/918446900843" class="float-wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
+ 
+<script>
+/* SLIDER — arrows, dots, touch swipe, keyboard */
+const slides = document.querySelectorAll('.slide');
+const dotsWrap = document.getElementById('sliderDots');
+let cur = 0, timer;
+ 
+// Build dots
+slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Go to slide ' + (i+1));
+    d.onclick = () => { goTo(i); resetTimer(); };
+    dotsWrap.appendChild(d);
+});
+ 
+function goTo(n) {
+    if (n === cur) return;
+    const prev = cur; cur = (n + slides.length) % slides.length;
+ 
+    slides[prev].classList.add('leaving');
+    setTimeout(() => { slides[prev].classList.remove('leaving', 'active'); }, 900);
+ 
+    slides[cur].classList.add('active', 'entering');
+    setTimeout(() => { slides[cur].classList.remove('entering'); }, 1400);
+ 
+    document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === cur));
+}
+ 
+function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(cur + 1), 4200);
+}
+resetTimer();
+ 
+// Arrow buttons
+document.getElementById('slidePrev').onclick = () => { goTo(cur - 1); resetTimer(); };
+document.getElementById('slideNext').onclick = () => { goTo(cur + 1); resetTimer(); };
+ 
+// Touch / swipe support
+const heroEl = document.querySelector('.hero');
+let touchStartX = 0, touchStartY = 0;
+heroEl.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+}, { passive: true });
+heroEl.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        goTo(dx < 0 ? cur + 1 : cur - 1);
+        resetTimer();
+    }
+}, { passive: true });
+ 
+/* MOBILE DRAWER */
+function openDrawer() {
+    document.getElementById('mobileDrawer').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+    const dr = document.getElementById('mobileDrawer');
+    const panel = dr.querySelector('.drawer-panel');
+    panel.style.transform = 'translateX(100%)';
+    setTimeout(() => {
+        dr.classList.remove('open');
+        panel.style.transform = '';
+        document.body.style.overflow = '';
+    }, 360);
+}
+ 
+/* PAGE NAV */
+function showPage(id) {
+    if (typeof event !== 'undefined' && event) event.preventDefault();
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('#navLinks a').forEach(a => a.classList.toggle('active', a.getAttribute('data-page') === id));
+    document.querySelectorAll('#drawerLinks a').forEach(a => a.classList.toggle('active', a.getAttribute('data-dpage') === id));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeDrawer();
+}
+ 
+/* CATEGORY TABS */
+document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const t = this.dataset.tab;
+        this.closest('.tab-nav').querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-' + t).classList.add('active');
+    });
+});
+ 
+/* CUSTOMER TABS */
+document.querySelectorAll('[data-ctab]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const t = this.dataset.ctab;
+        document.querySelectorAll('[data-ctab]').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.ctab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('ctab-' + t).classList.add('active');
+    });
+});
+ 
+/* FORM */
+function handleSubmit(e) {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(e.target));
+    const msg = `Hi Shivaak Enterprises,%0A%0AName: ${d.name}%0APhone: ${d.phone}%0AEmail: ${d.email||'NA'}%0ALocation: ${d.location}%0AScrap Type: ${d['scrap-type']||'NA'}%0AMessage: ${d.message}`;
+    window.open(`https://wa.me/918446900843?text=${msg}`, '_blank');
+    e.target.reset();
+}
+ 
+document.addEventListener('DOMContentLoaded', () => {
+    showPage('home');
+    // Build email from parts so it can't be auto-encoded
+    const u = 'Shivaak331';
+    const d = 'gmail' + '.' + 'com';
+    const email = u + '@' + d;
+    const href = 'mail' + 'to:' + email;
+    // Announcement bar
+    const annEl = document.getElementById('annEmail');
+    if (annEl) { annEl.href = href; }
+    // Contact page
+    const contactEl = document.getElementById('contactEmail');
+    if (contactEl) { contactEl.href = href; contactEl.textContent = email; }
+    // Footer
+    const footerEl = document.getElementById('footerEmail');
+    const footerTxt = document.getElementById('footerEmailText');
+    if (footerEl) { footerEl.href = href; }
+    if (footerTxt) { footerTxt.textContent = email; }
+});
+</script>
+</body>
+</html>
